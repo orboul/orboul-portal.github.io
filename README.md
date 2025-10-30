@@ -1,6 +1,6 @@
-# Orboul Personal Dev Portal
+# Orboul Command Vault
 
-This repository is a lightweight static portal for quick access to Orboul tooling, links, and notes. The project is intentionally backend-free so it can be hosted anywhere that serves static files (GitHub Pages, Vercel, Netlify, S3, etc.).
+This repository contains a lightweight, password-gated command library optimised for a single operator. Everything runs client-side so it can be hosted anywhere that serves static files (GitHub Pages, Vercel, Netlify, S3, etc.).
 
 ## Running locally
 
@@ -8,20 +8,17 @@ Open `index.html` in a browser. No build tooling is required.
 
 ## Customising
 
-- **Access key:** Update the `ACCESS_CODE` value near the top of `app.js`.
-- **Launchpad tiles:** Edit the `state.launchpad` array in `app.js` with your own links and descriptions.
-- **CLI snippets:** Update the `state.snippets` array to keep frequently used commands one click away.
-- **Signals section:** Replace entries in `state.signals` with your own focus items or status checks.
-- **Theme:** The site supports light and dark modes. The toggle persists the preference in `localStorage`.
+- **Default commands:** Tweak the `DEFAULT_COMMANDS` array in `app.js` to seed the catalogue with the operations you rely on most.
+- **Custom commands/snippets:** Use the in-app forms to add entries. They are encrypted and saved locally once you have unlocked the workspace.
+- **Theme:** Toggle between dark and light mode via the button in the top-right of the workspace. The preference is saved to `localStorage`.
+- **Resetting:** Clear browser storage (DevTools → Application → Storage) to remove the password and all encrypted content.
 
 ## Scratchpad storage
 
-The scratchpad writes to `localStorage` in the current browser, so notes never leave your machine. Clearing browser storage removes them. Replace this logic with an API call when you wire up a real backend.
+Notes, custom commands, and snippets live in encrypted `localStorage` entries. The AES-GCM key is derived from the password you set the first time you open the app. Lose the password and the stored data becomes unreadable.
 
 ## Adding real authentication later
 
-1. Replace the client-side `validateAccessKey` function with an API call to your auth service.
-2. On success, store a token (e.g., JWT) instead of the `localStorage` flag.
-3. Use the token when fetching data for launchpad/snippets/signals instead of hard-coded arrays.
-
-Until then, remember that the current access key is purely cosmetic and should not guard sensitive data.
+1. Swap the password-creation flow in `app.js` for your auth provider (e.g. Auth0, Supabase, custom API). Persist only a short-lived token client-side.
+2. Replace the `encryptData`/`decryptData` helpers with API calls to sync notes and user-defined commands to your datastore.
+3. Keep the AES logic if you want to encrypt before sending to a backend—just ship the ciphertext instead of storing in `localStorage`.
