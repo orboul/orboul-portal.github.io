@@ -3,110 +3,203 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Orboul Dev Portal</title>
+    <title>Orboul Command Vault</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="stars"></div>
 
     <main class="portal-shell">
-      <section id="auth-panel" class="panel">
+      <section id="auth-panel" class="panel panel--auth">
         <header class="panel__header">
           <div class="logo">
             <span class="logo__mark">O</span>
             <div class="logo__meta">
               <strong>Orboul</strong>
-              <span>Personal Dev Portal</span>
+              <span>Command Vault</span>
             </div>
           </div>
         </header>
 
-        <form id="access-form" class="panel__body">
-          <h1>Welcome back, User.</h1>
-          <p class="muted">
-            This is your private launchpad. Authenticate with your access key to
-            load tools, notes, and quick commands.
-          </p>
+        <div class="panel__body auth-views">
+          <form id="setup-form" class="auth-form" autocomplete="off">
+            <h1>Set Access Password</h1>
+            <p class="muted">
+              Create a password to protect commands, notes, and snippets stored on this device.
+            </p>
 
-          <label for="access-code" class="field">
-            <span>Access Key</span>
-            <input
-              id="access-code"
-              name="access-code"
-              type="password"
-              inputmode="text"
-              autocomplete="off"
-              spellcheck="false"
-              placeholder="••••••••"
-              required
-            />
-          </label>
+            <label for="setup-password" class="field">
+              <span>Password</span>
+              <input
+                id="setup-password"
+                name="setup-password"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+              />
+            </label>
 
-          <button type="submit" class="primary-action">Enter Portal</button>
-          <p id="auth-error" class="error" role="alert" aria-live="polite"></p>
-        </form>
+            <label for="setup-confirm" class="field">
+              <span>Confirm Password</span>
+              <input
+                id="setup-confirm"
+                name="setup-confirm"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+              />
+            </label>
 
-        <footer class="panel__footer muted">
+            <button type="submit" class="primary-action">Create &amp; Unlock</button>
+            <p id="setup-error" class="error" role="alert" aria-live="polite"></p>
+          </form>
+
+          <form id="unlock-form" class="auth-form hidden" autocomplete="off">
+            <h1>Unlock Workspace</h1>
+            <p class="muted">
+              Enter the password you set for this browser to view saved commands and notes.
+            </p>
+
+            <label for="unlock-password" class="field">
+              <span>Password</span>
+              <input
+                id="unlock-password"
+                name="unlock-password"
+                type="password"
+                autocomplete="current-password"
+                required
+              />
+            </label>
+
+            <button type="submit" class="primary-action">Unlock</button>
+            <p id="unlock-error" class="error" role="alert" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <footer class="panel__footer muted tiny">
           <p>
-            No backend yet. The access key is validated client-side. Update it
-            inside <code>app.js</code> when you are ready.
+            Passwords and all workspace data live in this browser's storage. Clear storage to reset.
           </p>
         </footer>
       </section>
 
-      <section id="dashboard" class="panel panel--glass hidden" aria-hidden="true">
-        <header class="panel__header dashboard__header">
+      <section id="workspace" class="panel panel--glass hidden" aria-hidden="true">
+        <header class="panel__header workspace__header">
           <div>
-            <h1 id="greeting">Orboul Control Room</h1>
-            <p class="muted">Centralize links, automate snippets, track ideas.</p>
+            <h1 id="greeting">Command Library</h1>
+            <p class="muted">Search, filter, and copy server operations.</p>
           </div>
           <div class="actions">
             <button id="theme-toggle" class="ghost-action" type="button">
               Toggle Theme
             </button>
-            <button id="sign-out" class="ghost-action" type="button">
-              Sign Out
+            <button id="lock-portal" class="ghost-action" type="button">
+              Lock
             </button>
           </div>
         </header>
 
-        <div class="panel__body dashboard__grid">
-          <section class="module module--wide" aria-labelledby="module-launchpad">
-            <header class="module__header">
-              <h2 id="module-launchpad">Launchpad</h2>
-              <p class="muted">Pinned systems and consoles.</p>
-            </header>
-            <ul id="launchpad" class="tile-grid"></ul>
-          </section>
+        <div class="panel__body workspace__grid">
+          <div class="stack stack--primary">
+            <section class="module module--wide" aria-labelledby="module-commands">
+              <header class="module__header">
+                <div>
+                  <h2 id="module-commands">Command Search</h2>
+                  <p class="muted">
+                    Browse curated commands or add your own. Tap any tile to copy.
+                  </p>
+                </div>
+                <label class="field field--search" for="command-search">
+                  <span class="visually-hidden" id="command-search-label">Search commands</span>
+                  <input
+                    id="command-search"
+                    type="search"
+                    placeholder="Search by command, description, or category..."
+                    aria-labelledby="command-search-label"
+                    autocomplete="off"
+                  />
+                </label>
+              </header>
+              <div id="category-filter" class="filter-chips" role="group" aria-label="Filter by category"></div>
+              <ul id="command-list" class="tile-grid tile-grid--commands"></ul>
+            </section>
 
-          <section class="module" aria-labelledby="module-notes">
-            <header class="module__header">
-              <h2 id="module-notes">Scratchpad</h2>
-              <p class="muted">Quick thoughts persist locally.</p>
-            </header>
-            <textarea
-              id="scratchpad"
-              rows="8"
-              placeholder="Drop commands, TODOs, or insights here..."
-            ></textarea>
-            <p class="muted tiny">Autosaves to this browser only.</p>
-          </section>
+            <section class="module" aria-labelledby="module-add-command">
+              <header class="module__header">
+                <h2 id="module-add-command">Add Command</h2>
+                <p class="muted">
+                  Store frequently used operations with categories for quick filtering.
+                </p>
+              </header>
+              <form id="command-form" class="stack stack--form" autocomplete="off">
+                <label class="field" for="command-name">
+                  <span>Label</span>
+                  <input id="command-name" name="command-name" type="text" required />
+                </label>
+                <label class="field" for="command-text">
+                  <span>Command</span>
+                  <textarea id="command-text" name="command-text" rows="2" required></textarea>
+                </label>
+                <label class="field" for="command-category">
+                  <span>Category</span>
+                  <input
+                    id="command-category"
+                    name="command-category"
+                    type="text"
+                    placeholder="e.g. Filesystem"
+                    required
+                  />
+                </label>
+                <label class="field" for="command-description">
+                  <span>Description</span>
+                  <textarea id="command-description" name="command-description" rows="2"></textarea>
+                </label>
+                <button type="submit" class="primary-action">Save Command</button>
+                <p id="command-feedback" class="muted tiny" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
 
-          <section class="module" aria-labelledby="module-snippets">
-            <header class="module__header">
-              <h2 id="module-snippets">CLI Snippets</h2>
-              <p class="muted">Tap to copy common commands.</p>
-            </header>
-            <ul id="snippets" class="tile-grid"></ul>
-          </section>
+          <div class="stack stack--secondary">
+            <section class="module" aria-labelledby="module-notes">
+              <header class="module__header">
+                <h2 id="module-notes">Local Notes</h2>
+                <p class="muted">Anything here stays encrypted in this browser.</p>
+              </header>
+              <textarea
+                id="scratchpad"
+                rows="10"
+                placeholder="Drop runbooks, TODOs, or reminders..."
+              ></textarea>
+              <p class="muted tiny">Autosaves with your password-protected data.</p>
+            </section>
 
-          <section class="module module--wide" aria-labelledby="module-roadmap">
-            <header class="module__header">
-              <h2 id="module-roadmap">Signals</h2>
-              <p class="muted">Keep an eye on service status and focus items.</p>
-            </header>
-            <ul id="signals" class="signal-list"></ul>
-          </section>
+            <section class="module" aria-labelledby="module-snippets">
+              <header class="module__header">
+                <h2 id="module-snippets">Code Snippets</h2>
+                <p class="muted">Store multi-line fragments for reuse.</p>
+              </header>
+              <ul id="snippet-list" class="tile-grid tile-grid--snippets"></ul>
+              <form id="snippet-form" class="stack stack--form" autocomplete="off">
+                <label class="field" for="snippet-name">
+                  <span>Title</span>
+                  <input id="snippet-name" name="snippet-name" type="text" required />
+                </label>
+                <label class="field" for="snippet-description">
+                  <span>Notes</span>
+                  <input id="snippet-description" name="snippet-description" type="text" />
+                </label>
+                <label class="field" for="snippet-code">
+                  <span>Code</span>
+                  <textarea id="snippet-code" name="snippet-code" rows="4" required></textarea>
+                </label>
+                <button type="submit" class="primary-action">Save Snippet</button>
+                <p id="snippet-feedback" class="muted tiny" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
         </div>
       </section>
     </main>
