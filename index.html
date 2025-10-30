@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orboul Dev Portal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="stars"></div>
+
+    <main class="portal-shell">
+      <section id="auth-panel" class="panel">
+        <header class="panel__header">
+          <div class="logo">
+            <span class="logo__mark">O</span>
+            <div class="logo__meta">
+              <strong>Orboul</strong>
+              <span>Personal Dev Portal</span>
+            </div>
+          </div>
+        </header>
+
+        <form id="access-form" class="panel__body">
+          <h1>Welcome back, Matthew.</h1>
+          <p class="muted">
+            This is your private launchpad. Authenticate with your access key to
+            load tools, notes, and quick commands.
+          </p>
+
+          <label for="access-code" class="field">
+            <span>Access Key</span>
+            <input
+              id="access-code"
+              name="access-code"
+              type="password"
+              inputmode="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="••••••••"
+              required
+            />
+          </label>
+
+          <button type="submit" class="primary-action">Enter Portal</button>
+          <p id="auth-error" class="error" role="alert" aria-live="polite"></p>
+        </form>
+
+        <footer class="panel__footer muted">
+          <p>
+            No backend yet. The access key is validated client-side. Update it
+            inside <code>app.js</code> when you are ready.
+          </p>
+        </footer>
+      </section>
+
+      <section id="dashboard" class="panel panel--glass hidden" aria-hidden="true">
+        <header class="panel__header dashboard__header">
+          <div>
+            <h1 id="greeting">Orboul Control Room</h1>
+            <p class="muted">Centralize links, automate snippets, track ideas.</p>
+          </div>
+          <div class="actions">
+            <button id="theme-toggle" class="ghost-action" type="button">
+              Toggle Theme
+            </button>
+            <button id="sign-out" class="ghost-action" type="button">
+              Sign Out
+            </button>
+          </div>
+        </header>
+
+        <div class="panel__body dashboard__grid">
+          <section class="module module--wide" aria-labelledby="module-launchpad">
+            <header class="module__header">
+              <h2 id="module-launchpad">Launchpad</h2>
+              <p class="muted">Pinned systems and consoles.</p>
+            </header>
+            <ul id="launchpad" class="tile-grid"></ul>
+          </section>
+
+          <section class="module" aria-labelledby="module-notes">
+            <header class="module__header">
+              <h2 id="module-notes">Scratchpad</h2>
+              <p class="muted">Quick thoughts persist locally.</p>
+            </header>
+            <textarea
+              id="scratchpad"
+              rows="8"
+              placeholder="Drop commands, TODOs, or insights here..."
+            ></textarea>
+            <p class="muted tiny">Autosaves to this browser only.</p>
+          </section>
+
+          <section class="module" aria-labelledby="module-snippets">
+            <header class="module__header">
+              <h2 id="module-snippets">CLI Snippets</h2>
+              <p class="muted">Tap to copy common commands.</p>
+            </header>
+            <ul id="snippets" class="tile-grid"></ul>
+          </section>
+
+          <section class="module module--wide" aria-labelledby="module-roadmap">
+            <header class="module__header">
+              <h2 id="module-roadmap">Signals</h2>
+              <p class="muted">Keep an eye on service status and focus items.</p>
+            </header>
+            <ul id="signals" class="signal-list"></ul>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
